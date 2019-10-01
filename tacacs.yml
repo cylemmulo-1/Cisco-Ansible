@@ -35,4 +35,4 @@
          - aaa authentication username-prompt "LOCAL USERNAME:"
          - aaa authorization console
          - aaa accounting commands 1 default start-stop group NM-TACACS
-         - aaa authorization commands 15 default group NETMAN-TACACS local
+         - aaa accounting commands 15 default start-stop group NETMAN-TACACS
