@@ -1,0 +1,37 @@
+
+---
+- hosts: iosswitches
+
+  gather_facts: false
+  connection: local
+
+  tasks:
+   - name: tacacs server 1
+     ios_config:
+       lines:
+         - key S1L-tacacs
+         - address ipv4 115.0.42.26 
+       parents: tacacs server NME-ISE-01
+
+   - name: tacacs server 2
+     ios_config:
+       lines:
+         - key S1L-tacacs
+         - address ipv4 115.32.42.26
+       parents: tacacs server NME-ISE-02
+
+   - name: aaa tacacs
+     ios_config:
+       lines:
+         - server name NME-ISE-01
+         - server name NME-ISE-02
+         - ip tacacs source-interface vlan2
+       parents: aaa group server tacacs+ NETMAN-TACACS
+
+   - name: aaa tacacs
+     ios_config:
+       lines:
+         - aaa authentication password-prompt "LOCAL PASSWORD:" 
+         - aaa authentication username-prompt "LOCAL USERNAME:"
+         - aaa authorization console
+         - aaa accounting commands 1 default start-stop group NM-TACACS
