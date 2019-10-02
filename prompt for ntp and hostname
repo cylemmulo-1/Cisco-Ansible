@@ -8,9 +8,15 @@
     - name: ntp
       prompt: "What is your the ntp server ip?"
       private: no
+
+    - name: hostname
+      prompt: "What is your the hostname?"
+      private: no
+
   tasks:
    - name: change
      ios_config:
        lines:
          - ntp server {{ ntp }}
+         - hostname {{ hostname }}
 
