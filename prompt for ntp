@@ -1,0 +1,16 @@
+
+---
+- hosts: 3560test
+  gather_facts: false
+  connection: local
+
+  vars_prompt:
+    - name: ntp
+      prompt: "What is your the ntp server ip?"
+      private: no
+  tasks:
+   - name: change
+     ios_config:
+       lines:
+         - ntp server {{ ntp }}
+
