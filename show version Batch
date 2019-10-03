@@ -1,25 +1,24 @@
 
 ---
-- hosts: iosswitches
+- hosts: test
   gather_facts: false
-  connection: local
 
   tasks:
    - name: show run
      ios_command:
        commands:
-         - show run | i hostname
-         - show version | B SW Version
+         - "show run | i hostname"
+         - "show version | i System image file"
      register: config
-     
-     # this builds a show run in the buffer
-   - local_action: copy content={{config.stdout}} dest=/etc/ansible/backups/showrunout.txt
-   
-     # this appends that buffer to a file for when I have multiple entries. The insertafter portion is important. 
-   - name: append 
+
+    # this builds a show run in the buffer
+   - local_action: copy content={{config.stdout}} dest=/etc/ansible/backups/showrun.{{ lookup('pipe','date +%Y-%m-%d-%H') }}.txt
+
+     # this appends that buffer to a file for when I have multiple entries. The insertafter portion is important.
+     # note it is only accurate up to the hour, that is because both files have to be the same exact name.
+   - name: append
      lineinfile:
-       dest: /etc/ansible/backups/showrunout.txt
+       dest: /etc/ansible/backups/showrun.{{ lookup('pipe','date +%Y-%m-%d-%H') }}.txt
        line: "{{config.stdout}}"
        insertafter: EOF
      delegate_to: localhost
-
