@@ -1,4 +1,4 @@
---
+---
 - hosts: 3560test
   gather_facts: false
   connection: local
