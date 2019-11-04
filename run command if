@@ -1,0 +1,19 @@
+--
+- hosts: TOR
+  gather_facts: false
+  connection: local
+
+  tasks:
+   - name: show run
+     ios_command:
+       commands:
+         - show run interface vlan 2
+       wait_for:
+         - result[0] contains '255.224'
+     register: command_out
+
+   - name: configure vlan2 settings
+     ios_config:
+       lines:
+         - description ansiblechecked
+       parents: interface vlan 2
