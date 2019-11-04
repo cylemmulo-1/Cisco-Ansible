@@ -3,6 +3,7 @@
   gather_facts: false
   connection: local
 
+# This runs a show run int vlan 2 and checks for the words 255.224. If it finds this, it will continue. If not it will fail for the device.
   tasks:
    - name: show run
      ios_command:
@@ -12,6 +13,7 @@
          - result[0] contains '255.224'
      register: command_out
 
+# This will be configured if the results from the wait_for are true.
    - name: configure vlan2 settings
      ios_config:
        lines:
