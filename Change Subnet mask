@@ -1,0 +1,19 @@
+---
+- hosts: TOR
+  gather_facts: false
+  connection: local
+  
+  #This will gather the interface facts, and set the subnet mask to 255.192 while using the ip address located in ios_facts under the net_interfaces - vlan2 - ipv4.
+   - name: Gather facts
+      ios_facts:
+        gather_subset: interfaces
+
+    - name: ios_config
+      ios_config:
+        match: line
+        replace: line
+        save_when: changed
+        lines:
+          - 'ip address {{ ansible_net_interfaces["Vlan2"]["ipv4"][0]["address"] }} 255.255.255.192'
+        parents:
+          - interface Vlan2
