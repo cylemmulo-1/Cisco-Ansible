@@ -1,0 +1,32 @@
+
+---
+- hosts: cisco-ios-switches
+  gather_facts: false
+  connection: local
+
+  tasks:
+   - name: show run
+     ios_command:
+       commands:
+         - show run interface vlan 2
+       wait_for:
+       - result[0] contains '255.224'
+
+   - name: show run
+     ios_command:
+       commands:
+         - "show run | i hostname"
+         - "show run | i 115.17"
+     register: config
+
+    # this builds a show run in the buffer
+   - local_action: copy content={{config.stdout}} dest=/etc/ansible/batch/showrun.{{ lookup('pipe','date +%Y-%m-%d-%H') }}.txt
+
+     # this appends that buffer to a file for when I have multiple entries. The insertafter portion is important.
+     # note it is only accurate up to the hour, that is because both files have to be the same exact name.
+   - name: append
+     lineinfile:
+       dest: /etc/ansible/batch/showrun.{{ lookup('pipe','date +%Y-%m-%d-%H') }}.txt
+       line: "{{config.stdout}}"
+       insertafter: EOF
+     delegate_to: localhost
