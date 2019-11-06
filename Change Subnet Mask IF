@@ -1,0 +1,21 @@
+---
+- hosts: TOR
+  gather_facts: false
+  connection: local
+  
+  # This is the same as the other change subnet mask except it would scan all my interface vlan 2 addresses and only do the change if I had a /27 subnet mask.
+    - name: Gather facts
+      ios_facts:
+        gather_subset: interfaces
+
+    - name: ios_config
+      ios_config:
+        match: line
+        replace: line
+        save_when: changed
+        lines:
+          - 'ip address {{ ansible_net_interfaces["Vlan2"]["ipv4"][0]["address"] }} 255.255.255.192'
+        parents:
+          - interface Vlan2
+      when:
+        - 'ansible_net_interfaces["Vlan2"]["ipv4"][0]["subnet"] == 27'
